@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m pytest:*)",
+      "Bash(python3:*)",
+      "Bash(make nxt:*)",
+      "Bash(make:*)",
+      "Bash(../bazel-bin/tools/tree_size_compare:*)",
+      "Bash(bazelisk test:*)",
+      "Bash(find:*)",
+      "Bash(bazelisk build:*)",
+      "Bash(bazelisk run:*)"
+    ]
+  }
+}
