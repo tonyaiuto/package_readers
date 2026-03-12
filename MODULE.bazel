@@ -1,0 +1,9 @@
+module(
+    name = "package_readers",
+    version = "0.1.0",
+    repo_name = "package_readers",
+)
+
+# Do not update to newer versions until you need a specific new feature.
+bazel_dep(name = "rules_license", version = "1.0.0")
+bazel_dep(name = "rules_python", version = "1.0.0")
