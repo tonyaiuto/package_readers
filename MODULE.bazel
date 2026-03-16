@@ -7,3 +7,5 @@ module(
 # Do not update to newer versions until you need a specific new feature.
 bazel_dep(name = "rules_license", version = "1.0.0")
 bazel_dep(name = "rules_python", version = "1.0.0")
+
+bazel_dep(name = "rules_pkg", version = "1.2.0", dev_dependency = True)

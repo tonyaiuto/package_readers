@@ -4,10 +4,11 @@
 import threading
 import unittest
 
-from in_process_pipe import InProcessPipe
+from lib.in_process_pipe import InProcessPipe
 
 
 class InProcessPipeTest(unittest.TestCase):
+
     def test_basic_write_read(self):
         p = InProcessPipe()
         p.write(b"hello")
@@ -73,7 +74,7 @@ class InProcessPipeTest(unittest.TestCase):
 
         def writer():
             for i in range(0, len(expected), 100):
-                p.write(expected[i : i + 100])
+                p.write(expected[i:i+100])
             p.close()
 
         t = threading.Thread(target=writer)
