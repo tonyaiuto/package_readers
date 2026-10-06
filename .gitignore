@@ -1,3 +1,4 @@
 MODULE.bazel.lock
 *.pyc
 bazel-*
+.claude/
