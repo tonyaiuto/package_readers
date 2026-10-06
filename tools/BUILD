@@ -53,6 +53,7 @@ py_binary(
     deps = [
         "//lib:deb_reader",
         "//lib:dmg_reader",
+        "//lib:docker_reader",
         "//lib:fs_reader",
         "//lib:rpm_reader",
         "//lib:saved_tree",
@@ -67,6 +68,7 @@ py_library(
     deps = [
         "//lib:deb_reader",
         "//lib:dmg_reader",
+        "//lib:docker_reader",
         "//lib:fs_reader",
         "//lib:rpm_reader",
         "//lib:saved_tree",

@@ -44,6 +44,14 @@ py_library(
 )
 
 py_library(
+    name = "docker_reader",
+    srcs = [
+        "docker_reader.py",
+    ],
+    deps = [":tree_reader"],
+)
+
+py_library(
     name = "dmg_reader",
     srcs = [
         "dmg_reader.py",
@@ -118,6 +126,12 @@ py_library(
     srcs = [
         "tree_reader.py",
     ],
+)
+
+py_test(
+    name = "docker_reader_test",
+    srcs = ["docker_reader_test.py"],
+    deps = [":docker_reader"],
 )
 
 py_test(

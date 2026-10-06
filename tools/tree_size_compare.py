@@ -11,6 +11,7 @@ import sys
 from lib.tree_reader import FileInfo, TreeReader
 from lib.deb_reader import DebReader
 from lib.dmg_reader import DmgReader
+from lib.docker_reader import DockerReader
 from lib.pkg_reader import PkgReader
 from lib.fs_reader import FileSystemReader
 from lib.rpm_reader import RpmReader
@@ -44,6 +45,8 @@ class InputFactory:
             return SavedTreeReader(path)
         elif path.endswith(".deb"):
             return DebReader(path)
+        elif path.endswith(".docker"):
+            return DockerReader(path)
         elif path.endswith(".rpm"):
             return RpmReader(path)
         elif path.endswith(".dmg"):
