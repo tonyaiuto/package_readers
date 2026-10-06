@@ -9,3 +9,16 @@ bazel_dep(name = "rules_license", version = "1.0.0")
 bazel_dep(name = "rules_python", version = "1.0.0")
 
 bazel_dep(name = "rules_pkg", version = "1.2.0", dev_dependency = True)
+
+# Find the system docker CLI, used to build the docker image in //distribution.
+find_docker = use_repo_rule("//toolchains/docker:configure.bzl", "find_docker")
+
+find_docker(
+    name = "docker_tools",
+    dev_dependency = True,
+)
+
+register_toolchains(
+    "@docker_tools//:all",
+    dev_dependency = True,
+)

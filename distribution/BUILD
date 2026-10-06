@@ -12,6 +12,7 @@ load("@rules_pkg//pkg:deb.bzl", "pkg_deb")
 load("@rules_pkg//pkg:mappings.bzl", "pkg_attributes", "pkg_files")
 load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
 load("@rules_python//python:py_test.bzl", "py_test")
+load(":docker_image.bzl", "docker_image_from_tar")
 
 package(
     default_package_metadata = ["//:license"],
@@ -135,6 +136,18 @@ genrule(
 # Integration test: the .deb and the docker image above are built from the
 # same tar, so DebReader and DockerReader must read back identical trees.
 # Requires the docker image, so it inherits "manual"/"requires-docker".
+# Docker image, built straight from //tools with system docker CLI commands
+docker_image_from_tar(
+    name = "package_readers_docker",
+    src = ":distribution_tar",
+    out = "package_readers.docker",
+    tags = [
+        "requires_docker",
+    ],
+)
+
+# Integration test: the .deb and the docker image above are built from the
+# same tar, so DebReader and DockerReader must read back identical trees.
 # ============================================================================
 
 py_test(
@@ -145,8 +158,7 @@ py_test(
         ":package_readers_docker",
     ],
     tags = [
-        "manual",
-        "requires-docker",
+        "requires_docker",
     ],
     deps = [
         "//tools:tree_size_compare_lib",
