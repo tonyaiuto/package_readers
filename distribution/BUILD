@@ -120,9 +120,9 @@ pkg_deb(
 # ============================================================================
 
 genrule(
-    name = "package_readers_docker",
+    name = "xpackage_readers_docker",
     srcs = [":distribution_tar"],
-    outs = ["package_readers.docker"],
+    outs = ["xpackage_readers.docker"],
     cmd = "$(location build_docker_image.sh) $(SRCS) $@",
     local = True,
     tags = [
