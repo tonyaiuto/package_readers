@@ -12,6 +12,7 @@ import unittest
 from python.runfiles import runfiles
 
 from lib.deb_reader import DebReader
+from lib.msi_reader import MsiReader, encode_stream_name
 from lib.saved_tree import SavedTreeReader
 from lib.tar_reader import TarReader
 from lib.zip_reader import ZipReader
@@ -242,6 +243,42 @@ class ZipReaderTest(unittest.TestCase):
         self.assertEqual(tree["a"].mode, 0o755)
         self.assertEqual(tree["a/b.txt"].mode, 0o644)
         self.assertEqual(tree["a/b.txt"].size, 5)
+
+
+class MsiReaderTest(unittest.TestCase):
+    """Test MsiReader functionality."""
+
+    def setUp(self):
+        msi_path = get_runfile("testdata/example.msi")
+        self.tree = load_tree_as_dict(MsiReader(msi_path))
+
+    def test_msi_reader_lists_files(self):
+        self.assertEqual(
+            set(self.tree),
+            {
+                "ProgramFilesFolder",
+                "ProgramFilesFolder/Test",
+                "ProgramFilesFolder/Test/Hello 1.0",
+                "ProgramFilesFolder/Test/Hello 1.0/Hello.exe",
+            },
+        )
+
+    def test_msi_file_properties(self):
+        exe = self.tree["ProgramFilesFolder/Test/Hello 1.0/Hello.exe"]
+        self.assertFalse(exe.is_dir)
+        self.assertEqual(exe.size, 16376)
+        self.assertEqual(exe.mode, 0o644)
+
+    def test_msi_directory_properties(self):
+        d = self.tree["ProgramFilesFolder/Test/Hello 1.0"]
+        self.assertTrue(d.is_dir)
+        self.assertEqual(d.mode, 0o755)
+
+    def test_stream_name_encoding(self):
+        """Stream names pack two name characters per code point."""
+        self.assertEqual(encode_stream_name("_Columns", True), "\u4840\u3b3f\u43f2\u4438\u45b1")
+        # An odd trailing character is encoded on its own.
+        self.assertEqual(encode_stream_name("A"), "\u480a")
 
 
 if __name__ == "__main__":

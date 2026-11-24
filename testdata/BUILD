@@ -269,3 +269,13 @@ pkg_zip(
         ":test_deb_usr_files",
     ],
 )
+
+# ============================================================================
+# MSI package for testing MsiReader
+# ============================================================================
+
+# example.msi is the sample package from pymsi
+# (https://github.com/nightlark/pymsi, docs/_static/example.msi), MIT License.
+# See third_party_licenses/pymsi.txt.
+# It installs a single file: ProgramFilesFolder/Test/Hello 1.0/Hello.exe
+exports_files(["example.msi"])

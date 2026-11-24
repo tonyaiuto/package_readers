@@ -14,6 +14,7 @@ from lib.dmg_reader import DmgReader
 from lib.docker_reader import DockerReader
 from lib.pkg_reader import PkgReader
 from lib.fs_reader import FileSystemReader
+from lib.msi_reader import MsiReader
 from lib.rpm_reader import RpmReader
 from lib.tar_reader import TarReader
 from lib.saved_tree import SavedTreeReader, write_tree
@@ -54,6 +55,8 @@ class InputFactory:
             return DmgReader(path)
         elif path.endswith(".pkg"):
             return PkgReader(path)
+        elif path.endswith(".msi"):
+            return MsiReader(path)
         elif path.endswith((".zip", ".jar", ".whl")):
             return ZipReader(path)
         elif path.endswith((".tar", ".tar.gz", ".tar.bz2", ".tar.xz", ".tgz")):
