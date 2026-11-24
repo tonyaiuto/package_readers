@@ -7,7 +7,9 @@ import unittest
 
 from python.runfiles import runfiles
 
+from lib.deb_reader import DebReader
 from lib.tar_reader import TarReader
+from lib.zip_reader import ZipReader
 from tools.tree_size_compare import (
     stream_compare,
     load_tree_from_reader,
@@ -64,6 +66,28 @@ class StreamCompareTest(unittest.TestCase):
         self.assertEqual(results["symlink_target_changed"], [])
         self.assertEqual(results["metadata_changed"], [])
         self.assertEqual(results["size_changed"], [])
+
+    def test_stream_compare_cross_format_zip_deb(self):
+        """A zip and a deb with the same content compare as identical."""
+        zip_path = get_runfile("testdata/test_deb_as_zip.zip")
+        deb_path = get_runfile("testdata/test_deb.deb")
+
+        expected = load_tree_from_reader(ZipReader(zip_path))
+        results = stream_compare(expected, DebReader(deb_path), self._default_flags())
+
+        for key, value in results.items():
+            self.assertEqual(value, [], f"unexpected {key}: {value}")
+
+    def test_stream_compare_cross_format_tar_zip(self):
+        """The reference tree compares identical as tar and as zip."""
+        tar_path = get_runfile("testdata/reference_tar.tar")
+        zip_path = get_runfile("testdata/reference_zip.zip")
+
+        expected = load_tree_from_reader(TarReader(tar_path=tar_path))
+        results = stream_compare(expected, ZipReader(zip_path), self._default_flags())
+
+        for key, value in results.items():
+            self.assertEqual(value, [], f"unexpected {key}: {value}")
 
     def test_stream_compare_missing_files(self):
         """stream_compare detects files only in expected."""

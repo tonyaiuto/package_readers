@@ -128,6 +128,14 @@ py_library(
     ],
 )
 
+py_library(
+    name = "zip_reader",
+    srcs = [
+        "zip_reader.py",
+    ],
+    deps = [":tree_reader"],
+)
+
 py_test(
     name = "docker_reader_test",
     srcs = ["docker_reader_test.py"],

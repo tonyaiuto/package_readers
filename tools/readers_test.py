@@ -14,6 +14,7 @@ from python.runfiles import runfiles
 from lib.deb_reader import DebReader
 from lib.saved_tree import SavedTreeReader
 from lib.tar_reader import TarReader
+from lib.zip_reader import ZipReader
 
 
 def get_runfile(path):
@@ -193,6 +194,54 @@ class DebReaderTest(unittest.TestCase):
         for path in tree:
             self.assertFalse(path.startswith("./"),
                              f"Path should not start with './': {path}")
+
+
+class ZipReaderTest(unittest.TestCase):
+    """Test ZipReader functionality."""
+
+    def setUp(self):
+        zip_path = get_runfile("testdata/reference_zip.zip")
+        self.tree = load_tree_as_dict(ZipReader(zip_path))
+
+    def test_zip_reader_loads_reference(self):
+        self.assertEqual(
+            set(self.tree), {"hello.txt", "subdir", "subdir/nested.txt", "link_to_hello"}
+        )
+        self.assertEqual(self.tree["hello.txt"].size, 14)
+
+    def test_zip_modes_are_permission_bits(self):
+        """Modes match TarReader: permission bits only."""
+        self.assertEqual(self.tree["hello.txt"].mode, 0o644)
+        self.assertEqual(self.tree["subdir"].mode, 0o755)
+
+    def test_zip_directory_has_no_trailing_slash(self):
+        subdir = self.tree["subdir"]
+        self.assertTrue(subdir.is_dir)
+        self.assertEqual(subdir.size, 0)
+
+    def test_zip_symlink(self):
+        link = self.tree["link_to_hello"]
+        self.assertTrue(link.is_symlink)
+        self.assertFalse(link.is_dir)
+        self.assertEqual(link.symlink_target, "hello.txt")
+        self.assertEqual(link.size, 0)
+
+    def test_zip_without_unix_attributes(self):
+        """Archives without Unix attributes get default modes."""
+        import zipfile
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = os.path.join(tmp, "dos.zip")
+            with zipfile.ZipFile(path, "w") as zf:
+                for name, data in (("a/", b""), ("a/b.txt", b"hello")):
+                    zinfo = zipfile.ZipInfo(name)
+                    zinfo.create_system = 0  # MS-DOS
+                    zf.writestr(zinfo, data)
+            tree = load_tree_as_dict(ZipReader(path))
+        self.assertTrue(tree["a"].is_dir)
+        self.assertEqual(tree["a"].mode, 0o755)
+        self.assertEqual(tree["a/b.txt"].mode, 0o644)
+        self.assertEqual(tree["a/b.txt"].size, 5)
 
 
 if __name__ == "__main__":

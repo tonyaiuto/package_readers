@@ -17,6 +17,7 @@ from lib.fs_reader import FileSystemReader
 from lib.rpm_reader import RpmReader
 from lib.tar_reader import TarReader
 from lib.saved_tree import SavedTreeReader, write_tree
+from lib.zip_reader import ZipReader
 
 
 class InputFactory:
@@ -33,7 +34,7 @@ class InputFactory:
         Detect input type and create appropriate reader.
 
         Args:
-            path: Path to directory, tar file, JSON file, or RPM file
+            path: Path to a directory, saved JSON tree, or package file
 
         Returns:
             TreeReader instance
@@ -53,6 +54,8 @@ class InputFactory:
             return DmgReader(path)
         elif path.endswith(".pkg"):
             return PkgReader(path)
+        elif path.endswith((".zip", ".jar", ".whl")):
+            return ZipReader(path)
         elif path.endswith((".tar", ".tar.gz", ".tar.bz2", ".tar.xz", ".tgz")):
             return TarReader(path)
         elif os.path.isdir(path):
