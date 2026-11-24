@@ -6,6 +6,7 @@
 load("@rules_pkg//pkg:deb.bzl", "pkg_deb")
 load("@rules_pkg//pkg:mappings.bzl", "pkg_attributes", "pkg_files", "pkg_mkdirs", "pkg_mklink")
 load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
+load("@rules_pkg//pkg:zip.bzl", "pkg_zip")
 
 package(
     default_package_metadata = ["//:license"],
@@ -54,6 +55,16 @@ pkg_mklink(
 # Basic tar (uncompressed)
 pkg_tar(
     name = "reference_tar",
+    srcs = [
+        ":reference_dirs",
+        ":reference_link",
+        ":reference_pkg_files",
+    ],
+)
+
+# Zip of the reference tree
+pkg_zip(
+    name = "reference_zip",
     srcs = [
         ":reference_dirs",
         ":reference_link",
@@ -234,3 +245,37 @@ pkg_deb(
     package = "testpkg",
     version = "1.0",
 )
+
+# A zip with the same content as test_deb, for cross-format comparison.
+pkg_files(
+    name = "test_deb_etc_files",
+    srcs = [":etc/nsswitch.conf"],
+    attributes = pkg_attributes(mode = "0644"),
+    prefix = "etc",
+)
+
+pkg_files(
+    name = "test_deb_usr_files",
+    srcs = [":usr/fizzbuzz"],
+    attributes = pkg_attributes(mode = "0755"),
+    prefix = "usr",
+)
+
+pkg_zip(
+    name = "test_deb_as_zip",
+    srcs = [
+        ":java_link",
+        ":test_deb_etc_files",
+        ":test_deb_usr_files",
+    ],
+)
+
+# ============================================================================
+# MSI package for testing MsiReader
+# ============================================================================
+
+# example.msi is the sample package from pymsi
+# (https://github.com/nightlark/pymsi, docs/_static/example.msi), MIT License.
+# See third_party_licenses/pymsi.txt.
+# It installs a single file: ProgramFilesFolder/Test/Hello 1.0/Hello.exe
+exports_files(["example.msi"])

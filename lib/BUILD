@@ -78,6 +78,14 @@ py_library(
 )
 
 py_library(
+    name = "msi_reader",
+    srcs = [
+        "msi_reader.py",
+    ],
+    deps = [":tree_reader"],
+)
+
+py_library(
     name = "pkg_reader",
     srcs = [
         "pkg_reader.py",
@@ -126,6 +134,14 @@ py_library(
     srcs = [
         "tree_reader.py",
     ],
+)
+
+py_library(
+    name = "zip_reader",
+    srcs = [
+        "zip_reader.py",
+    ],
+    deps = [":tree_reader"],
 )
 
 py_test(

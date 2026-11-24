@@ -56,10 +56,12 @@ py_binary(
         "//lib:dmg_reader",
         "//lib:docker_reader",
         "//lib:fs_reader",
+        "//lib:msi_reader",
         "//lib:rpm_reader",
         "//lib:saved_tree",
         "//lib:tar_reader",
         "//lib:tree_reader",
+        "//lib:zip_reader",
     ],
 )
 
@@ -71,10 +73,12 @@ py_library(
         "//lib:dmg_reader",
         "//lib:docker_reader",
         "//lib:fs_reader",
+        "//lib:msi_reader",
         "//lib:rpm_reader",
         "//lib:saved_tree",
         "//lib:tar_reader",
         "//lib:tree_reader",
+        "//lib:zip_reader",
     ],
 )
 
@@ -83,16 +87,20 @@ py_test(
     name = "readers_test",
     srcs = ["readers_test.py"],
     data = [
+        "//testdata:example.msi",
         "//testdata:reference_tar",
         "//testdata:reference_tar_gz",
         "//testdata:reference_tar_xz",
+        "//testdata:reference_zip",
         "//testdata:test_deb",
     ],
     deps = [
         "//lib:deb_reader",
         "//lib:in_process_pipe",
+        "//lib:msi_reader",
         "//lib:saved_tree",
         "//lib:tar_reader",
+        "//lib:zip_reader",
         "@rules_python//python/runfiles",
     ],
 )
@@ -107,6 +115,9 @@ py_test(
         "//testdata:extra_file_tar",
         "//testdata:modified_tar",
         "//testdata:reference_tar",
+        "//testdata:reference_zip",
+        "//testdata:test_deb",
+        "//testdata:test_deb_as_zip",
     ],
     deps = [
         ":tree_size_compare_lib",
